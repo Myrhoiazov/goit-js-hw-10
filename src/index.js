@@ -75,9 +75,9 @@ function markupCountry(countries) {
 <img class="country__img" src="${svg}" alt="" width='150'/>
 </div>
 <h2 class="country__title">${official}</h2>
-<p class="text country__capital">Capital: ${capital}</p>
-<p class="text country__popul">Population: ${population}</p>
-<p class="text country__lang">Languages: ${values.join(', ')}</p>
+<p class="text country__capital"> <b>Capital:</b> ${capital}</p>
+<p class="text country__popul"> <b>Population:</b> ${population}</p>
+<p class="text country__lang"> <b>Languages:</b> ${values.join(', ')}</p>
 <p></p>`;
 
   return (info.innerHTML = markup);
