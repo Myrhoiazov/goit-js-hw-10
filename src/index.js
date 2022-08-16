@@ -1,5 +1,5 @@
 import './css/styles.css';
-import fetchCountries from '../src/fetchCountries';
+import { fetchCountries } from '../src/fetchCountries';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
 
@@ -13,36 +13,42 @@ inputRef.addEventListener('input', debounce(searchCountry, DEBOUNCE_DELAY));
 function searchCountry() {
   const input = inputRef.value.trim();
   if (!input) {
-    list.innerHTML = '';
+    cleanListMarkup();
+    cleanCountryMarkup();
     return;
   }
 
-  if (input.length == 1) {
-    Notiflix.Notify.info(
-      '"Too many matches found. Please enter a more specific name."'
-    );
-    list.innerHTML = '';
-    info.innerHTML = '';
-    return;
-  }
-
-  fetchCountries(input).then(data => markupFetch(data));
+  fetchCountries(input)
+    .then(data => markupFetch(data))
+    .catch(error => {
+      if (error.message === '404') {
+        cleanListMarkup();
+        cleanCountryMarkup();
+        Notiflix.Notify.failure('Oops, there is no country with that name');
+      } else {
+        alert('Пришла ПИЗДА!!!!!! : -)');
+      }
+    });
 }
 
 function markupFetch(countries) {
   console.log(countries);
 
   if (countries.length > 10) {
-    Notiflix.Notify.failure('Oops, there is no country with that name');
+    cleanListMarkup();
+    cleanCountryMarkup();
+    Notiflix.Notify.failure(
+      'Too many matches found. Please enter a more specific name.'
+    );
   }
 
   if (countries.length > 1 && countries.length < 10) {
-    info.innerHTML = '';
+    cleanCountryMarkup();
     markupListCountry(countries);
   }
 
   if (countries.length == 1) {
-    list.innerHTML = '';
+    cleanListMarkup();
     markupCountry(countries);
   }
 }
@@ -75,4 +81,12 @@ function markupCountry(countries) {
 <p></p>`;
 
   return (info.innerHTML = markup);
+}
+
+function cleanListMarkup() {
+  list.innerHTML = '';
+}
+
+function cleanCountryMarkup() {
+  info.innerHTML = '';
 }
